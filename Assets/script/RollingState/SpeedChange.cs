@@ -19,13 +19,22 @@ namespace script {
         }
 
         public SpeedChange(AnimationCurve curve, float minSpeed, float maxSpeed, float currentDeg,
-            float targetDeg, Action onComplete) {
+            float targetDeg, bool revers, Action onComplete) {
             if (minSpeed > maxSpeed) {
                 (minSpeed, maxSpeed) = (maxSpeed, minSpeed);
             }
 
 
             var deltaDeg = targetDeg - currentDeg;
+
+            if (revers) {
+                var normalize = targetDeg % 360;
+                var round = (int) targetDeg / 360;
+                deltaDeg = 360 - normalize + currentDeg;
+                deltaDeg += round * 360;
+            }
+
+
             _sampleStrategy = new SampleSpeedByDistance(curve, deltaDeg, minSpeed, maxSpeed);
             OnComplete = onComplete;
         }
